@@ -25,7 +25,7 @@ resource "aws_db_instance" "postgres" {
   instance_class       = "db.t3.micro"
   db_name              = "avalanches_pedido_db"
   username             = "dbadminuser"
-  password             = "securepassword"
+  password             = random_password.rds_password.result
   parameter_group_name = "default.postgres15"
   skip_final_snapshot  = true
   publicly_accessible  = true
