@@ -52,14 +52,25 @@ resource "random_password" "rds_password" {
   override_special = "!@#%^&*()"
 }
 
+data "aws_secretsmanager_secret" "existing_secret" {
+  name = "pedido-dbcredentials-postgree"
+}
+
 resource "aws_secretsmanager_secret" "db_credentials" {
+  count                   = length(data.aws_secretsmanager_secret.existing_secret) == 0 ? 1 : 0
   name                    = "pedido-dbcredentials-postgree"
   recovery_window_in_days = 0
-
-  lifecycle {
-    ignore_changes = [name]
-  }
 }
+
+
+# resource "aws_secretsmanager_secret" "db_credentials" {
+#   name                    = "pedido-dbcredentials-postgree"
+#   recovery_window_in_days = 0
+
+#   lifecycle {
+#     ignore_changes = [name]
+#   }
+# }
 
 
 resource "aws_secretsmanager_secret_version" "db_credentials_version" {
