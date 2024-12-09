@@ -52,19 +52,14 @@ resource "random_password" "rds_password" {
   override_special = "!@#%^&*()"
 }
 
-data "aws_secretsmanager_secret" "existing_secret" {
-  name = "pedido-dbcredentials-postgree"
+resource "random_id" "secret_version" {
+  byte_length = 4
 }
 
 resource "aws_secretsmanager_secret" "db_credentials" {
   name                    = "pedido-dbcredentials-postgree"
   recovery_window_in_days = 0
-
-  lifecycle {
-    ignore_changes = [name]
-  }
 }
-
 
 resource "aws_secretsmanager_secret_version" "db_credentials_version" {
   secret_id = aws_secretsmanager_secret.db_credentials.id
@@ -74,5 +69,7 @@ resource "aws_secretsmanager_secret_version" "db_credentials_version" {
     db_name     = aws_db_instance.postgres.db_name
     db_user     = aws_db_instance.postgres.username
     db_password = random_password.rds_password.result
+    version_id  = random_id.secret_version.hex
   })
 }
+
