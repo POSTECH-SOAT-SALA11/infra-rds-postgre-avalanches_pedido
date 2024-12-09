@@ -56,17 +56,22 @@ resource "random_id" "secret_version" {
   byte_length = 4
 }
 
-resource "aws_secretsmanager_secret" "db_credentials" {
-  name                    = "pedido-dbcredentials-postgree"
-  recovery_window_in_days = 0
-
-  lifecycle {
-    prevent_destroy = true
-  }
+data "aws_secretsmanager_secret" "db_credentials" {
+  name = "pedido-dbcredentials-postgree"
 }
 
+# resource "aws_secretsmanager_secret" "db_credentials" {
+#   name                    = "pedido-dbcredentials-postgree"
+#   recovery_window_in_days = 0
+
+#   lifecycle {
+#     prevent_destroy = true
+#   }
+# }
+
 resource "aws_secretsmanager_secret_version" "db_credentials_version" {
-  secret_id = aws_secretsmanager_secret.db_credentials.id
+  secret_id = data.aws_secretsmanager_secret.db_credentials.id
+
   secret_string = jsonencode({
     db_host     = aws_db_instance.postgres.endpoint
     db_port     = 5432
@@ -75,10 +80,7 @@ resource "aws_secretsmanager_secret_version" "db_credentials_version" {
     db_password = random_password.rds_password.result
     version_id  = random_id.secret_version.hex
   })
-
-  lifecycle {
-    ignore_changes = [secret_id]
-  }
 }
+
 
 
