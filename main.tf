@@ -57,24 +57,17 @@ data "aws_secretsmanager_secret" "existing_secret" {
 }
 
 resource "aws_secretsmanager_secret" "db_credentials" {
-  count                   = length(data.aws_secretsmanager_secret.existing_secret) == 0 ? 1 : 0
   name                    = "pedido-dbcredentials-postgree"
   recovery_window_in_days = 0
+
+  lifecycle {
+    ignore_changes = [name]
+  }
 }
 
 
-# resource "aws_secretsmanager_secret" "db_credentials" {
-#   name                    = "pedido-dbcredentials-postgree"
-#   recovery_window_in_days = 0
-
-#   lifecycle {
-#     ignore_changes = [name]
-#   }
-# }
-
-
 resource "aws_secretsmanager_secret_version" "db_credentials_version" {
-  secret_id = aws_secretsmanager_secret.db_credentials[0].id
+  secret_id = aws_secretsmanager_secret.db_credentials.id
   secret_string = jsonencode({
     db_host     = aws_db_instance.postgres.endpoint
     db_port     = 5432
