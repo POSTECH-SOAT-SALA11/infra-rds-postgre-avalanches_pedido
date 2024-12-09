@@ -59,6 +59,10 @@ resource "random_id" "secret_version" {
 resource "aws_secretsmanager_secret" "db_credentials" {
   name                    = "pedido-dbcredentials-postgree"
   recovery_window_in_days = 0
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_secretsmanager_secret_version" "db_credentials_version" {
@@ -71,5 +75,10 @@ resource "aws_secretsmanager_secret_version" "db_credentials_version" {
     db_password = random_password.rds_password.result
     version_id  = random_id.secret_version.hex
   })
+
+  lifecycle {
+    ignore_changes = [secret_id]
+  }
 }
+
 
