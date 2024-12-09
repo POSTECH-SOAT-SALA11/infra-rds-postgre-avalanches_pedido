@@ -24,7 +24,7 @@ resource "aws_db_instance" "postgres" {
   engine_version       = "15.4"
   instance_class       = "db.t3.micro"
   db_name              = "avalanches_pedido_db"
-  identifier           = "avalanches_pedido_db"
+  identifier           = "avalanches-pedido-db"
   username             = "dbadminuser"
   password             = random_password.rds_password.result
   parameter_group_name = "default.postgres15"
