@@ -53,7 +53,7 @@ resource "random_password" "rds_password" {
 }
 
 resource "aws_secretsmanager_secret" "db_credentials" {
-  name                    = "pedido-dbcredentials-postgreesql"
+  name                    = "pedido-dbcredentials-postgree"
   recovery_window_in_days = 0
 
   lifecycle {
